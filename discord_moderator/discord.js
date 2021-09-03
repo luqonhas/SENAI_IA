@@ -140,6 +140,47 @@ client.on('message', async (message) => {
     message.channel.send(karma ? karma : 'Sem karma ainda! :C');
   }
 
+  async function evaluateMessage(message) {
+    let validation = false
+    let scores;
+    try {
+      scores = await perspective.analyzeText(message.content);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  
+    const userid = message.author.id;
+  
+    for (const attribute in emojiMap) {
+      if (scores[attribute]) {
+        message.react(emojiMap[attribute]);
+        users[userid][attribute] =
+                  users[userid][attribute] ?
+                  users[userid][attribute] + 1 : 1;
+                  validation = true
+      }
+    }
+  
+  
+    if(validation){
+      const Karma = getKarma(message)
+      message.channel.send(Karma);
+  
+      var UserMsgDisc = new Object();
+      UserMsgDisc.userId = message.author.id
+      UserMsgDisc.IdDisc = 0
+      UserMsgDisc.QuantidadeMsg = 0
+  
+      if(UserMsgDisc.userId ){
+  
+      }
+  
+    }
+    // Return whether or not we should kick the user
+    return (users[userid]['TOXICITY'] > process.env.KICK_THRESHOLD);
+  }
+
   if (message.content.startsWith('Olá')) {
     message.channel.send(`Falai ${message.author.username} carai! Firmeza cachorro?`);
   }
